@@ -58,3 +58,11 @@ terraform output ansible_inventory > hosts
 If there is anything wrong/missing in the inventory file, try executing `terraform apply` again.
 
 This `hosts` file will be used as inventory file in other Ansible-based sections.
+
+## Destroy
+
+To destroy all provisioned resources:
+
+```sh
+terraform destroy
+```
