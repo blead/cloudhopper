@@ -9,3 +9,4 @@
 
 - [Infrastructure](infrastructure)
 - [IPsec VPN](ipsec-vpn)
+- [Migration Host](migration-host)
