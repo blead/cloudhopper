@@ -1,0 +1,5 @@
+---
+# Restart service when config files has been changed
+- name: restart strongswan
+  service: name={{ strongswan_service }} state=restarted
+  become: true

@@ -1,0 +1,33 @@
+---
+- name: Install strongSwan
+  apt: pkg=strongswan state=present
+  become: true
+
+- name: Configure ipsec.conf
+  template: src=ipsec.conf.j2 dest={{ strongswan_base }}/ipsec.conf owner=root group=root mode=0644
+  notify: restart strongswan
+  become: true
+
+- name: Configure ipsec.secrets
+  template: src=ipsec.secrets.j2 dest={{ strongswan_base }}/ipsec.secrets owner=root group=root mode=0600
+  notify: restart strongswan
+  become: true
+
+- name: Configure sysctl.conf - ip_forward
+  sysctl: name=net.ipv4.ip_forward value=1 state=present
+  become: true
+
+- name: Configure sysctl.conf - accept_redirects
+  sysctl: name=net.ipv4.conf.all.accept_redirects value=0 state=present
+  become: true
+
+- name: Configure sysctl.conf - send_redirects
+  sysctl: name=net.ipv4.conf.all.send_redirects value=0 state=present
+  become: true
+
+- name: Configure iptables
+  command: iptables -t nat -A POSTROUTING -s {{ hostvars[item].private_subnet|quote }} -d {{ private_subnet|quote }} -j MASQUERADE
+  notify: restart strongswan
+  become: true
+  with_items: "{{ groups['vpn'] }}"
+  when: ansible_hostname != hostvars[item].ansible_hostname

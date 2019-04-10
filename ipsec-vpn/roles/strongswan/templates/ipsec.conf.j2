@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+
+{% for host in groups['vpn'] %}
+{% if not ansible_hostname == hostvars[host].ansible_hostname %}
+conn {{ hostvars[host].ansible_hostname }}
+  keyexchange=ikev1
+  authby=secret
+  type=tunnel
+  left={{ ansible_eth0.ipv4.address }} #Host internal ip address
+  leftsubnet={{ private_subnet }} #Host subnet
+  leftid={{ public_address }}
+  right={{ hostvars[host].public_address }} #Peer public ip address
+  rightsubnet={{ hostvars[host].private_subnet }} #Peer subnet
+  rightid={{ hostvars[host].public_address }}
+  ike=3des-md5-modp1024     #Phase 1 integrity check algos
+  esp=aes128-sha1-modp1024  #Phase 2 Encryption algos
+  ikelifetime=28800
+  lifetime=3600
+  dpddelay=30
+  dpdtimeout=120
+  dpdaction=restart
+  auto=start
+
+{% endif %}
+{% endfor %}

@@ -1,0 +1,17 @@
+[host]
+8.9.10.11 public_address=8.9.10.11 private_subnet=172.31.1.0/24
+104.215.155.205 public_address=104.215.155.205 private_subnet=10.0.1.0/24
+
+[host:vars]
+ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
+ansible_ssh_private_key_file=~/.ssh/id_rsa.pem
+ansible_ssh_user=ubuntu
+
+[vpn]
+3.1.204.225 public_address=3.1.204.225 private_subnet=172.31.1.0/24
+13.67.67.237 public_address=13.67.67.237 private_subnet=10.0.1.0/24
+
+[vpn:vars]
+ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
+ansible_ssh_private_key_file=~/.ssh/id_rsa.pem
+ansible_ssh_user=ubuntu

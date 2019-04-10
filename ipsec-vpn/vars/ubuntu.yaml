@@ -1,0 +1,2 @@
+strongswan_base: /etc
+strongswan_service: strongswan
