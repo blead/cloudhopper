@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+{% for host in groups['vpn'] %}
+/home {{ hostvars[host].private_address }}(rw,sync,no_subtree_check,no_root_squash)
+{% endfor %}

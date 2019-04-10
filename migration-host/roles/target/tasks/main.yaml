@@ -1,0 +1,96 @@
+---
+- name: Install packages to allow HTTPS apt repository
+  apt:
+    update_cache: true
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+  become: true
+
+- name: Add Docker's GPG key
+  apt_key:
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    url: https://download.docker.com/linux/ubuntu/gpg
+  become: true
+
+- name: Setup Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+  become: true
+
+- name: Setup CRIU repository
+  apt_repository:
+    repo: ppa:criu/ppa
+  become: true
+
+# unused for now
+# - name: Setup Project Atomic repository
+#   apt_repository:
+#     repo: ppa:projectatomic/ppa
+#   become: true
+
+- name: Install Docker
+  apt:
+    update_cache: true
+    name: docker-ce
+  become: true
+
+- name: Install CRIU
+  apt:
+    name: criu
+  become: true
+
+- name: Install NFS
+  apt:
+    name: nfs-kernel-server
+  become: true
+
+- name: Install bridge-utils
+  apt:
+    name: bridge-utils
+  become: true
+
+- name: Install iproute2
+  apt:
+    name: iproute2
+  become: true
+
+# unused for now
+# - name: Install skopeo
+#   apt:
+#     name: skopeo
+#   become: true
+
+- name: Install socat
+  apt:
+    name: socat
+  become: true
+
+# unused for now
+# - name: Install umoci
+#   get_url:
+#     url: https://github.com/openSUSE/umoci/releases/download/v0.4.4/umoci.amd64
+#     dest: /usr/local/bin/umoci
+#     mode: 0755
+#   become: true
+
+- name: Create /nfs/home
+  file:
+    path: /nfs/home
+    state: directory
+  become: true
+
+- name: Mount /nfs/home
+  mount:
+    path: /nfs/home
+    src: "{{ hostvars[source].private_address }}:/home"
+    fstype: nfs
+    state: mounted
+  become: true
+
+- name: Configure docker/daemon.json
+  copy: src=daemon.json dest=/etc/docker/daemon.json owner=root group=root mode=0644
+  notify: restart docker
+  become: true
