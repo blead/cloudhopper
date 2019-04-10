@@ -2,6 +2,7 @@ data "template_file" "ansible_aws_host" {
   template = "${file("${path.module}/host.tpl")}"
   vars {
     public_ip  = "${aws_instance.host.public_ip}"
+    private_ip = "${aws_instance.host.private_ip}"
     private_subnet = "${aws_subnet.default.cidr_block}"
   }
 }
@@ -10,6 +11,7 @@ data "template_file" "ansible_azure_host" {
   template = "${file("${path.module}/host.tpl")}"
   vars {
     public_ip  = "${azurerm_public_ip.host.ip_address}"
+    private_ip = "${azurerm_network_interface.host.private_ip_address}"
     private_subnet = "${azurerm_subnet.live_migration.address_prefix}"
   }
 }
@@ -18,6 +20,7 @@ data "template_file" "ansible_aws_vpn" {
   template = "${file("${path.module}/host.tpl")}"
   vars {
     public_ip  = "${aws_instance.vpn.public_ip}"
+    private_ip = "${aws_instance.vpn.private_ip}"
     private_subnet = "${aws_subnet.default.cidr_block}"
   }
 }
@@ -26,6 +29,7 @@ data "template_file" "ansible_azure_vpn" {
   template = "${file("${path.module}/host.tpl")}"
   vars {
     public_ip  = "${azurerm_public_ip.vpn.ip_address}"
+    private_ip = "${azurerm_network_interface.vpn.private_ip_address}"
     private_subnet = "${azurerm_subnet.live_migration.address_prefix}"
   }
 }
