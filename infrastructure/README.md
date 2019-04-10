@@ -26,7 +26,9 @@ For other methods, see: https://www.terraform.io/docs/providers/azurerm/index.ht
 
 ### Google
 
-WIP :D
+- Create a service account for your project
+- Download the provided JSON file
+- Provide the JSON file path to the corresponding variable
 
 https://www.terraform.io/docs/providers/google/index.html
 
