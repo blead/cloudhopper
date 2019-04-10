@@ -32,7 +32,7 @@ resource "azurerm_network_security_group" "all" {
     priority                   = 102
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "Tcp"
+    protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = "*"
     source_address_prefixes    = ["${azurerm_virtual_network.live_migration.address_space}"]
@@ -44,7 +44,7 @@ resource "azurerm_network_security_group" "all" {
     priority                   = 103
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "Tcp"
+    protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = "*"
     source_address_prefix      = "${aws_vpc.default.cidr_block}"
@@ -56,7 +56,7 @@ resource "azurerm_network_security_group" "all" {
     priority                   = 104
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "Tcp"
+    protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = "*"
     source_address_prefix    = "${aws_instance.vpn.public_ip}/32"
