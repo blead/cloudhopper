@@ -9,7 +9,7 @@ As can be seen from [`ipsec.secrets.j2`](roles/strongswan/templates/ipsec.secret
 Inventory file can be copied from the output of [Infrastructure](../infrastructure) section:
 
 ```sh
-cp ../infrastructure/hosts ./hosts
+cp ../infrastructure/aws-gcp/hosts ./hosts
 ```
 
 Otherwise, manually create a new file. See [`hosts.example`](hosts.example) for an example.

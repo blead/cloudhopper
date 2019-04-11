@@ -24,7 +24,7 @@ az login
 
 For other methods, see: https://www.terraform.io/docs/providers/azurerm/index.html#authenticating-to-azure.
 
-### Google
+### GCP
 
 - Create a service account for your project
 - Download the provided JSON file
