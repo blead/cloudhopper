@@ -6,7 +6,7 @@ conn {{ hostvars[host].ansible_hostname }}
   keyexchange=ikev1
   authby=secret
   type=tunnel
-  left={{ ansible_eth0.ipv4.address }} #Host internal ip address
+  left={{ private_address }} #Host internal ip address
   leftsubnet={{ private_subnet }} #Host subnet
   leftid={{ public_address }}
   right={{ hostvars[host].public_address }} #Peer public ip address
