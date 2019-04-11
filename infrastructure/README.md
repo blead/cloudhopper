@@ -1,5 +1,12 @@
 # Live Migration: Infrastructure
 
+## Directory
+
+- [AWS-Azure infrastructure](aws-azure).
+- [AWS-GCP infrastructure](aws-gcp).
+
+Documentation will assume AWS-GCP. Differences are very minimal between the 2 setups.
+
 ## Authentication
 
 ### AWS
@@ -38,8 +45,10 @@ Create `terraform.tfvars` with the following variables:
 - `key_name`
 - `public_key_path`
 - `private_key_path`
+- `gcp_project_id` (AWS-GCP only)
+- `gcp_credentials_path` (AWS-GCP only)
 
-Refer to [`terraform.tfvars.example`](terraform.tfvars.example).
+Refer to [`terraform.tfvars.example`](aws-gcp/terraform.tfvars.example).
 
 ## Provision
 
