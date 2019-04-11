@@ -1,0 +1,31 @@
+---
+- name: Install packages to allow HTTPS apt repository
+  apt:
+    update_cache: true
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - software-properties-common
+  become: true
+
+- name: Add Docker's GPG key
+  apt_key:
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    url: https://download.docker.com/linux/ubuntu/gpg
+  become: true
+
+- name: Setup Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+  become: true
+
+- name: Install Docker
+  apt:
+    update_cache: true
+    name: docker-ce
+  become: true
+
+- name: Configure docker/daemon.json
+  copy: src=daemon.json dest=/etc/docker/daemon.json owner=root group=root mode=0644
+  notify: restart docker
+  become: true

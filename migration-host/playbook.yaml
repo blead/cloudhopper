@@ -1,8 +1,15 @@
 ---
 - hosts: "{{ source }}"
   roles:
-  - source
+  - docker
+  - criu
+  - container-tools
+  - networking-tools
+  - nfs-source
 
 - hosts: "{{ target }}"
   roles:
-  - target
+  - docker
+  - criu
+  - networking-tools
+  - nfs-target

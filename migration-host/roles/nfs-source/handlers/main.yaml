@@ -2,7 +2,3 @@
 - name: restart nfs-server
   systemd: name=nfs-server state=restarted
   become: true
-
-- name: restart docker
-  systemd: name=docker state=restarted
-  become: true

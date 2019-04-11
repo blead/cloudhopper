@@ -1,0 +1,16 @@
+---
+- name: Install bridge-utils
+  apt:
+    update_cache: true
+    name: bridge-utils
+  become: true
+
+- name: Install iproute2
+  apt:
+    name: iproute2
+  become: true
+
+- name: Install socat
+  apt:
+    name: socat
+  become: true

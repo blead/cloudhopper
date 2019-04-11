@@ -1,0 +1,19 @@
+---
+- name: Install NFS
+  apt:
+    name: nfs-kernel-server
+  become: true
+
+- name: Create /nfs/home
+  file:
+    path: /nfs/home
+    state: directory
+  become: true
+
+- name: Mount /nfs/home
+  mount:
+    path: /nfs/home
+    src: "{{ hostvars[source].private_address }}:/home"
+    fstype: nfs
+    state: mounted
+  become: true

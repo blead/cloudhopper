@@ -1,0 +1,11 @@
+---
+- name: Setup CRIU repository
+  apt_repository:
+    repo: ppa:criu/ppa
+  become: true
+
+- name: Install CRIU
+  apt:
+    update_cache: true
+    name: criu
+  become: true
