@@ -3,9 +3,11 @@
   roles:
   - docker
   - criu
-  - container-tools
+  # not needed if not generating image
+  # - container-tools
   - networking-tools
   - nfs-source
+  - netns
 
 - hosts: "{{ target }}"
   roles:
@@ -13,3 +15,4 @@
   - criu
   - networking-tools
   - nfs-target
+  - netns

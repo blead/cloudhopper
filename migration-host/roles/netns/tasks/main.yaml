@@ -1,0 +1,22 @@
+---
+- name: Create mysql network namespace
+  script: netns.sh
+  environment:
+    NS: mysql
+    VETH: vethmysql
+    VPEER: vpeermysql
+    VETH_ADDR: 10.200.1.1
+    VPEER_ADDR: 10.200.1.2
+    BRIDGE_NAME: netbridge
+  become: true
+
+- name: Create wordpress network namespace
+  script: netns.sh
+  environment:
+    NS: wordpress
+    VETH: vethwordpress
+    VPEER: vpeerwordpress
+    VETH_ADDR: 10.200.2.1
+    VPEER_ADDR: 10.200.2.2
+    BRIDGE_NAME: netbridge
+  become: true

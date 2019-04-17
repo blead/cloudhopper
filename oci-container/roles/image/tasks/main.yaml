@@ -1,0 +1,8 @@
+---
+- name: Extract MySQL image
+  unarchive: src=https://github.com/blead/live-migration/releases/download/v0.0.1/mysql.tar.gz dest=/home/ubuntu/mysql remote_src=yes
+  become: true
+
+- name: Extract WordPress image
+  unarchive: src=https://github.com/blead/live-migration/releases/download/v0.0.1/wordpress.tar.gz dest=/home/ubuntu/wordpress remote_src=yes
+  become: true

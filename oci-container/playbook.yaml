@@ -1,0 +1,6 @@
+---
+- hosts: host
+  roles:
+  - image
+  - forward-ports
+  - container
