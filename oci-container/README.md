@@ -25,8 +25,10 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa.pem
 ```
 
+From the inventory, pick the source host to start container.
+
 Start provisioning:
 
 ```sh
-ansible-playbook -i hosts playbook.yaml
+ansible-playbook -i hosts -e source=8.9.10.11 playbook.yaml
 ```

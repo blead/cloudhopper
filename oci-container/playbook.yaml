@@ -3,4 +3,7 @@
   roles:
   - image
   - forward-ports
+
+- hosts: "{{ source | default('source') }}"
+  roles:
   - container
