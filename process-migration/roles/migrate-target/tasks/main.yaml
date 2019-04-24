@@ -5,7 +5,8 @@
 
 - name: Execute migration target script
   command: ./migrate-target.py
-  chdir: /home/ubuntu
+  args:
+    chdir: /home/ubuntu
   become: true
   async: 1000
   poll: 0

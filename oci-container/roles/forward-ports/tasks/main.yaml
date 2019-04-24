@@ -1,8 +1,8 @@
 ---
 - name: Forward port 3306 with socat
-  shell: socat tcp-listen:3306,reuseaddr,fork tcp-connect:10.200.1.2:3306 &
+  shell: socat tcp-listen:3306,reuseaddr,fork tcp-connect:10.200.1.2:3306 &> /dev/null < /dev/null
   become: true
 
 - name: Forward port 80 with socat
-  shell: socat tcp-listen:80,reuseaddr,fork tcp-connect:10.200.1.5:80 &
+  shell: socat tcp-listen:80,reuseaddr,fork tcp-connect:10.200.1.5:80 &> /dev/null < /dev/null
   become: true
