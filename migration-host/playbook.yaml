@@ -1,4 +1,12 @@
 ---
+- hosts: "{{ target }}"
+  roles:
+  - docker
+  - criu
+  - networking-tools
+  - nfs-target
+  - netns
+
 - hosts: "{{ source }}"
   roles:
   - docker
@@ -9,10 +17,3 @@
   - nfs-source
   - netns
 
-- hosts: "{{ target }}"
-  roles:
-  - docker
-  - criu
-  - networking-tools
-  - nfs-target
-  - netns
