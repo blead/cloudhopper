@@ -16,7 +16,7 @@ ip netns add $NS
 # Create a network bridge for our container
 brctl addbr ${BRIDGE_NAME}
 ip link set ${BRIDGE_NAME} up
-ip addr add ${VETH_ADDR}/24 dev ${BRIDGE_NAME}
+ip addr add ${BRIDGE_ADDR}/24 dev ${BRIDGE_NAME}
 
 # Create veth link.
 ip link add name ${VETH} type veth peer name ${VPEER}
@@ -35,12 +35,15 @@ ip netns exec $NS ip route add default via ${VETH_ADDR}
 # Enable IP-forwarding.
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
+# Turn off iptables processing in bridge
+echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
+
 # Flush forward rules.
-iptables -P FORWARD DROP
-iptables -F FORWARD
+# iptables -P FORWARD DROP
+# iptables -F FORWARD
 
 # Flush nat rules.
-iptables -t nat -F
+# iptables -t nat -F
 
 # Enable masquerading of 10.200.1.0.
 iptables -t nat -A POSTROUTING -s ${VPEER_ADDR}/24 -o eth0 -j MASQUERADE
