@@ -1,5 +1,5 @@
 ---
-- hosts: "{{ target }}"
+- hosts: "{{ target | default('target') }}"
   roles:
   - docker
   - criu
@@ -7,7 +7,7 @@
   - nfs-target
   - netns
 
-- hosts: "{{ source }}"
+- hosts: "{{ source | default('source') }}"
   roles:
   - docker
   - criu
