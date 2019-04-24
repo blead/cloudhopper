@@ -13,8 +13,8 @@ base_path = '/home/ubuntu/'
 xfer_path = '/nfs/home/ubuntu/'
 
 if len(sys.argv) < 2:
-	print 'Usage: ' + sys.argv[0] + ' <container id> <dest>'
-	sys.exit(1)
+  print 'Usage: ' + sys.argv[0] + ' <container id> <dest>'
+  sys.exit(1)
 
 container = sys.argv[1]
 dest = sys.argv[2]
@@ -23,47 +23,36 @@ container_path = base_path + container
 xfer_container_path = xfer_path + container
 
 def error():
-	print 'Something did not work. Exiting!'
-	sys.exit(1)
-
-def prepare():
-  try:
-    shutil.rmtree(image_path)
-  except:
-    pass
+  print 'Something did not work. Exiting!'
+  sys.exit(1)
 
 def real_dump():
-	old_cwd = os.getcwd()
-	os.chdir(container_path)
-	cmd = 'runc checkpoint --tcp-established ' + container
-	start = time.time()
-	print cmd
-	p = subprocess.Popen(cmd, shell=True)
+  old_cwd = os.getcwd()
+  os.chdir(container_path)
+  cmd = 'runc checkpoint --tcp-established ' + container
+  start = time.time()
+  print cmd
+  p = subprocess.Popen(cmd, shell=True)
   ret = p.wait()
-	end = time.time()
-	print '%s: checkpoint finished after %.2f second(s) with %d' % (container, end - start, ret)
-	os.chdir(old_cwd)
-	if ret != 0:
-		error()
+  end = time.time()
+  print '%s: checkpoint finished after %.2f second(s) with %d' % (container, end - start, ret)
+  os.chdir(old_cwd)
+  if ret != 0:
+    error()
 
 def xfer_dump():
-	sys.stdout.write('DUMP size: ')
-	sys.stdout.flush()
-	cmd = 'du -hs %s' % image_path
-	ret = os.system(cmd)
-	cmd = 'cp -ruT %s %s' % (container_path, xfer_container_path)
-	print 'Transferring DUMP to %s' % (xfer_container_path)
-	start = time.time()
-	ret = os.system(cmd)
-	end = time.time()
-	print 'DUMP transfer time %s seconds' % (end - start)
-	if ret != 0:
-		error()
+  cmd = 'cp -ruT %s %s' % (container_path, xfer_container_path)
+  print 'Transferring DUMP to %s' % (xfer_container_path)
+  start = time.time()
+  ret = os.system(cmd)
+  end = time.time()
+  print 'DUMP transfer time %s seconds' % (end - start)
+  if ret != 0:
+    error()
 
 def touch(fname):
-	open(fname, 'a').close()
+  open(fname, 'a').close()
 
-prepare()
 real_dump()
 xfer_dump()
 
@@ -72,19 +61,18 @@ cs.connect((dest, 8888))
 
 input = [cs,sys.stdin]
 
-
 cs.send(
   '{ "restore" : { "path" : "' + base_path +
   '", "container" : "' + container + '" } }'
 )
 
 while True:
-	inputready, outputready, exceptready = select.select(input,[],[], 5)
+  inputready, outputready, exceptready = select.select(input,[],[], 5)
 
-	if not inputready:
-		break
+  if not inputready:
+    break
 
-	for s in inputready:
-		 answer = s.recv(1024)
-		 print answer
+  for s in inputready:
+    answer = s.recv(1024)
+    print answer
 

@@ -1,6 +1,11 @@
 ---
+- name: Create migrate-target script
+  copy: src=migrate-target.py dest=/home/ubuntu/migrate-target.py owner=root group=root mode=0755
+  become: true
+
 - name: Execute migration target script
-  script: migrate-target.py
+  command: ./migrate-target.py
+  chdir: /home/ubuntu
   become: true
   async: 1000
   poll: 0
