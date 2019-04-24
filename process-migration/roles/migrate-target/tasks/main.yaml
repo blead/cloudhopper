@@ -1,0 +1,6 @@
+---
+- name: Execute migration target script
+  script: migrate-target.py
+  become: true
+  async: 1000
+  poll: 0

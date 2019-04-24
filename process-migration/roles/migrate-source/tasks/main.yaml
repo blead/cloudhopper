@@ -1,0 +1,8 @@
+---
+- name: Migrate MySQL
+  script: "migrate-source.py mysql {{ hostvars[target].private_address }}"
+  become: true
+
+- name: Migrate WordPress
+  script: "migrate-source.py wordpress {{ hostvars[target].private_address }}"
+  become: true

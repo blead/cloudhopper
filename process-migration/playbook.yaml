@@ -1,0 +1,8 @@
+---
+- hosts: "{{ target | default('target') }}"
+  roles:
+  - migrate-target
+
+- hosts: "{{ source | default('source') }}"
+  roles:
+  - migrate-source
