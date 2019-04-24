@@ -4,7 +4,16 @@
     name: nfs-kernel-server
   become: true
 
-- name: Configure exports
-  template: src=exports.j2 dest=/etc/exports owner=root group=root mode=0644
-  notify: restart nfs-server
+- name: Create /nfs/home
+  file:
+    path: /nfs/home
+    state: directory
+  become: true
+
+- name: Mount /nfs/home
+  mount:
+    path: /nfs/home
+    src: "{{ hostvars[target].private_address }}:/home"
+    fstype: nfs
+    state: mounted
   become: true
