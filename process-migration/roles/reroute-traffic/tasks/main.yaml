@@ -1,0 +1,30 @@
+---
+- name: Remove existing socat bound to port 80
+  shell: fuser -k -n tcp 80
+  become: true
+  ignore_errors: yes
+
+- name: Configure sysctl.conf - ip_forward
+  sysctl: name=net.ipv4.ip_forward value=1 state=present
+  become: true
+
+- name: Configure DNAT
+  command: "iptables -t nat -A PREROUTING -d {{ hostvars[source].private_address }} -p tcp --dport 80 -j DNAT --to-destination {{ hostvars[target].private_address }}"
+  become: true
+
+- name: Mark packets
+  command: "iptables -t mangle -A PREROUTING -d {{ hostvars[source].private_address }} -p tcp --dport 80 -j MARK --set-mark 0x1"
+  become: true
+
+- name: Forward port 80 to target
+  command: "iptables -A FORWARD -d {{ hostvars[target].private_address }} -p tcp --dport 80 -j ACCEPT"
+  become: true
+
+- name: Forward port 80 from target
+  command: "iptables -A FORWARD -s {{ hostvars[target].private_address }} -p tcp --sport 80 -j ACCEPT"
+  become: true
+
+- name: Configure SNAT
+  command: "iptables -t nat -A POSTROUTING -m mark --mark 0x1 -j SNAT --to-source {{ hostvars[source].private_address }}"
+  become: true
+

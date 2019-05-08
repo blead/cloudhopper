@@ -6,3 +6,4 @@
 - hosts: "{{ source | default('source') }}"
   roles:
   - migrate-source
+  - reroute-traffic
