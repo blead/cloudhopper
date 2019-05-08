@@ -1,0 +1,8 @@
+---
+- hosts: host
+  roles:
+  - container
+  - image
+  - socat
+  - iptables
+  - netns

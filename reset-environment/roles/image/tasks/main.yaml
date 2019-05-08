@@ -1,0 +1,8 @@
+---
+- name: Delete MySQL image
+  file: path=/home/ubuntu/mysql state=absent
+  become: true
+
+- name: Delete WordPress image
+  file: path=/home/ubuntu/wordpress state=absent
+  become: true

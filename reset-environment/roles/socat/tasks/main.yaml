@@ -1,0 +1,5 @@
+---
+- name: Kill socat processes
+  shell: pkill -f socat
+  become: true
+  ignore_errors: yes

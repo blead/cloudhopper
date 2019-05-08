@@ -1,0 +1,25 @@
+---
+- name: Delete DNAT
+  command: "iptables -t nat -D PREROUTING -d {{ hostvars[source].private_address }} -p tcp --dport 80 -j DNAT --to-destination {{ hostvars[target].private_address }}"
+  become: true
+  ignore_errors: yes
+
+- name: Delete mark
+  command: "iptables -t mangle -D PREROUTING -d {{ hostvars[source].private_address }} -p tcp --dport 80 -j MARK --set-mark 0x1"
+  become: true
+  ignore_errors: yes
+
+- name: Delete forwarding port 80 to target
+  command: "iptables -D FORWARD -d {{ hostvars[target].private_address }} -p tcp --dport 80 -j ACCEPT"
+  become: true
+  ignore_errors: yes
+
+- name: Delete forwarding port 80 from target
+  command: "iptables -D FORWARD -s {{ hostvars[target].private_address }} -p tcp --sport 80 -j ACCEPT"
+  become: true
+  ignore_errors: yes
+
+- name: Delete SNAT
+  command: "iptables -t nat -D POSTROUTING -m mark --mark 0x1 -j SNAT --to-source {{ hostvars[source].private_address }}"
+  become: true
+  ignore_errors: yes
