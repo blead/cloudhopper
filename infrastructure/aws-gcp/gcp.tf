@@ -43,7 +43,7 @@ resource "google_compute_address" "vpn" {
 }
 
 resource "google_compute_instance" "host" {
-  name         = "host"
+  name         = "host2"
   machine_type = "f1-micro"
 
   boot_disk {
@@ -57,10 +57,22 @@ resource "google_compute_instance" "host" {
     access_config = {
     }
   }
+
+  provisioner "remote-exec" {
+    connection {
+      user = "ubuntu"
+    }
+
+    inline = [
+      "sudo apt-get -y update",
+      "sudo apt-get -y update",
+      "sudo apt-get -y install python",
+    ]
+  }
 }
 
 resource "google_compute_instance" "vpn" {
-  name         = "vpn"
+  name         = "vpn2"
   machine_type = "f1-micro"
 
   boot_disk {
@@ -74,5 +86,17 @@ resource "google_compute_instance" "vpn" {
     access_config = {
         nat_ip = "${google_compute_address.vpn.address}"
     }
+  }
+
+  provisioner "remote-exec" {
+    connection {
+      user = "ubuntu"
+    }
+
+    inline = [
+      "sudo apt-get -y update",
+      "sudo apt-get -y update",
+      "sudo apt-get -y install python",
+    ]
   }
 }
