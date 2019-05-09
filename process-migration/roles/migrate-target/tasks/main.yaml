@@ -4,7 +4,7 @@
   become: true
 
 - name: Execute migration target script
-  command: ./migrate-target.py
+  command: "./migrate-target.py {{ hostvars[source].private_address }}"
   args:
     chdir: /home/ubuntu
   become: true

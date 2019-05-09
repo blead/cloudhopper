@@ -11,6 +11,12 @@ import subprocess
 HOST = ''   # Symbolic name meaning all available interfaces
 PORT = 8888 # Arbitrary non-privileged port
 
+if len(sys.argv) < 2:
+  print 'Usage: ' + sys.argv[0] + ' <source>'
+  sys.exit(1)
+
+source_addr = sys.argv[1]
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print 'Socket created'
 
@@ -45,10 +51,24 @@ def clientthread(conn, addr):
     try:
       msg = json.loads(data)
       if 'restore' in msg:
+        try:
+          lazy = bool(distutils.util.strtobool(msg['restore']['lazy']))
+        except:
+          lazy = False
         old_cwd = os.getcwd()
-        os.chdir(msg['restore']['path'] + msg['restore']['container'])
-        cmd = 'runc restore --tcp-established -d ' + msg['restore']['container']
+        container_path = msg['restore']['path'] + msg['restore']['container']
+        os.chdir(container_path)
+        cmd = 'runc restore --tcp-established -d --work-path ' + container_path
+        if lazy:
+          cmd += ' --lazy-pages'
+        cmd += ' ' + msg['restore']['container']
         print "Running " +  cmd
+        if lazy:
+          cmd = "criu lazy-pages --page-server --address " + source_addr
+          cmd += " --port " + msg['restore']['port']
+          cmd += " -vv -W " + container_path
+          print "Running lazy-pages server: " + cmd
+          lp = subprocess.Popen(cmd, shell=True)
         p = subprocess.Popen(cmd, shell=True)
         ret = p.wait()
         if ret == 0:
@@ -74,6 +94,6 @@ while 1:
   print 'Connected with ' + addr[0] + ':' + str(addr[1])
 
   #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
-  start_new_thread(clientthread ,(conn, str(addr[0]),))
+  start_new_thread(clientthread, (conn, str(addr[0]),))
 
 s.close()

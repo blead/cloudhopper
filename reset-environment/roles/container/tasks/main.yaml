@@ -1,20 +1,25 @@
 ---
+- name: Kill CRIU processes
+  command: pkill -f criu
+  become: true
+  ignore_errors: yes
+
 - name: Stop MySQL container
-  shell: runc kill -a mysql
+  command: runc kill -a mysql
   become: true
   ignore_errors: yes
 
 - name: Stop WordPress container
-  shell: runc kill -a wordpress
+  command: runc kill -a wordpress
   become: true
   ignore_errors: yes
 
 - name: Remove MySQL container
-  shell: runc delete -f mysql
+  command: runc delete -f mysql
   become: true
   ignore_errors: yes
 
 - name: Remove WordPress container
-  shell: runc delete -f wordpress
+  command: runc delete -f wordpress
   become: true
   ignore_errors: yes
