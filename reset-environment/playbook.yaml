@@ -3,6 +3,6 @@
   roles:
   - container
   - image
-  - socat
+  - ports
   - iptables
   - netns

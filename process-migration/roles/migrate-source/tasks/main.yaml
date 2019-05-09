@@ -1,8 +1,36 @@
 ---
-- name: Migrate MySQL
-  script: "migrate-source.py mysql {{ hostvars[target].private_address }}"
+- name: Create migrate-source script
+  copy: src=migrate-source.py dest=/home/ubuntu/migrate-source.py owner=root group=root mode=0755
   become: true
 
-- name: Migrate WordPress
-  script: "migrate-source.py wordpress {{ hostvars[target].private_address }}"
+- name: Migrate MySQL
+  command: "./migrate-source.py mysql {{ hostvars[target].private_address }}"
+  args:
+    chdir: /home/ubuntu
   become: true
+  async: 1000
+  poll: 0
+  register: migrate_mysql_result
+
+- name: Migrate WordPress
+  command: "./migrate-source.py wordpress {{ hostvars[target].private_address }}"
+  args:
+    chdir: /home/ubuntu
+  become: true
+  async: 1000
+  poll: 0
+  register: migrate_wordpress_result
+
+- name: Check MySQL migration
+  async_status: jid="{{ migrate_mysql_result.ansible_job_id }}"
+  become: true
+  register: mysql_result
+  until: mysql_result.finished
+  retries: 30
+
+- name: Check WordPress migration
+  async_status: jid="{{ migrate_wordpress_result.ansible_job_id }}"
+  become: true
+  register: wordpress_result
+  until: wordpress_result.finished
+  retries: 30

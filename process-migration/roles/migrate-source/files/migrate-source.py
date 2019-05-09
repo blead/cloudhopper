@@ -59,7 +59,7 @@ xfer_dump()
 cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cs.connect((dest, 8888))
 
-input = [cs,sys.stdin]
+input = [cs]
 
 cs.send(
   '{ "restore" : { "path" : "' + base_path +
