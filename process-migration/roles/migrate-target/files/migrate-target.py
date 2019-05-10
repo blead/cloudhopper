@@ -47,7 +47,8 @@ def clientthread(conn, addr):
       if 'restore' in msg:
         old_cwd = os.getcwd()
         os.chdir(msg['restore']['path'] + msg['restore']['container'])
-        cmd = 'runc restore --tcp-established -d ' + msg['restore']['container']
+        # --tcp-established and --skip-in-flight already specified in the config file
+        cmd = 'runc restore -d ' + msg['restore']['container']
         print "Running " +  cmd
         p = subprocess.Popen(cmd, shell=True)
         ret = p.wait()

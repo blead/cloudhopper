@@ -29,7 +29,8 @@ def error():
 def real_dump():
   old_cwd = os.getcwd()
   os.chdir(container_path)
-  cmd = 'runc checkpoint --tcp-established ' + container
+  # --tcp-established and --skip-in-flight already specified in the config file
+  cmd = 'runc checkpoint ' + container
   start = time.time()
   print cmd
   p = subprocess.Popen(cmd, shell=True)

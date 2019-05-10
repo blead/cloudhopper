@@ -1,4 +1,8 @@
 ---
+- name: Create a CRIU configuration file for runC
+  copy: src=runc.conf dest=/etc/criu/runc.conf owner=root group=root mode=0755
+  become: true
+
 - name: Create migrate-target script
   copy: src=migrate-target.py dest=/home/ubuntu/migrate-target.py owner=root group=root mode=0755
   become: true
