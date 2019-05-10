@@ -1,10 +1,10 @@
 ---
 - name: Kill socat processes
-  shell: pkill -f socat
+  command: pkill -f socat
   become: true
   ignore_errors: yes
 
 - name: Remove migrate-target.py bound to port 8888
-  shell: fuser -k -n tcp 8888
+  command: fuser -k -n tcp 8888
   become: true
   ignore_errors: yes

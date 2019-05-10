@@ -8,7 +8,7 @@
   become: true
 
 - name: Migrate MySQL
-  command: "./migrate-source.py mysql {{ hostvars[target].private_address }}"
+  command: "./migrate-source.py mysql {{ hostvars[target].private_address }} {{ precopy | default('false') }} {{ postcopy | default('false') }} 8027"
   args:
     chdir: /home/ubuntu
   become: true
@@ -17,7 +17,7 @@
   register: migrate_mysql_result
 
 - name: Migrate WordPress
-  command: "./migrate-source.py wordpress {{ hostvars[target].private_address }}"
+  command: "./migrate-source.py wordpress {{ hostvars[target].private_address }} {{ precopy | default('false') }} {{ postcopy | default('false') }} 8028"
   args:
     chdir: /home/ubuntu
   become: true
@@ -30,11 +30,11 @@
   become: true
   register: mysql_result
   until: mysql_result.finished
-  retries: 30
+  retries: 100
 
 - name: Check WordPress migration
   async_status: jid="{{ migrate_wordpress_result.ansible_job_id }}"
   become: true
   register: wordpress_result
   until: wordpress_result.finished
-  retries: 30
+  retries: 100
