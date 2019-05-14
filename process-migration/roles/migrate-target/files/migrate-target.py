@@ -64,13 +64,13 @@ def clientthread(conn, addr):
           cmd += ' --lazy-pages'
         cmd += ' ' + msg['restore']['container']
         print "Running " +  cmd
+        p = subprocess.Popen(cmd, shell=True)
         if lazy:
           cmd = "criu lazy-pages --page-server --address " + source_addr
           cmd += " --port " + msg['restore']['port']
           cmd += " -vv -D " + image_path
           print "Running lazy-pages server: " + cmd
           lp = subprocess.Popen(cmd, shell=True)
-        p = subprocess.Popen(cmd, shell=True)
         ret = p.wait()
         if ret == 0:
           reply = "runc restored %s successfully" % msg['restore']['container']
