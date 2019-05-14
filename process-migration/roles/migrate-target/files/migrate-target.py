@@ -57,6 +57,7 @@ def clientthread(conn, addr):
           lazy = False
         old_cwd = os.getcwd()
         container_path = msg['restore']['path'] + msg['restore']['container']
+        image_path = container_path + '/checkpoint'
         os.chdir(container_path)
         cmd = 'runc restore -d --work-path ' + container_path
         if lazy:
@@ -66,7 +67,7 @@ def clientthread(conn, addr):
         if lazy:
           cmd = "criu lazy-pages --page-server --address " + source_addr
           cmd += " --port " + msg['restore']['port']
-          cmd += " -vv -W " + container_path
+          cmd += " -vv -D " + image_path
           print "Running lazy-pages server: " + cmd
           lp = subprocess.Popen(cmd, shell=True)
         p = subprocess.Popen(cmd, shell=True)
@@ -77,7 +78,7 @@ def clientthread(conn, addr):
           reply = "runc failed(%d)" % ret
         os.chdir(old_cwd)
       else:
-        print "Unkown request : " + msg
+        print "Unknown request : " + msg
     except:
       continue
 
