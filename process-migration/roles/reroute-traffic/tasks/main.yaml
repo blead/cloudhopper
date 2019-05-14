@@ -1,9 +1,4 @@
 ---
-- name: Remove existing socat bound to port 80
-  shell: fuser -k -n tcp 80
-  become: true
-  ignore_errors: yes
-
 - name: Configure sysctl.conf - ip_forward
   sysctl: name=net.ipv4.ip_forward value=1 state=present
   become: true  
@@ -28,3 +23,7 @@
   command: "iptables -t nat -A POSTROUTING -m mark --mark 0x1 -j SNAT --to-source {{ hostvars[source].private_address }}"
   become: true
 
+- name: Remove existing socat bound to port 80
+  shell: fuser -k -n tcp 80
+  become: true
+  ignore_errors: yes
