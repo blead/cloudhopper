@@ -12,7 +12,7 @@ HOST = ''   # Symbolic name meaning all available interfaces
 PORT = 8888 # Arbitrary non-privileged port
 
 if len(sys.argv) < 2:
-      print 'Usage: ' + sys.argv[0] + ' <source>'
+  print 'Usage: ' + sys.argv[0] + ' <source>'
   sys.exit(1)
 
 source_addr = sys.argv[1]
