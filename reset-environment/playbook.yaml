@@ -6,3 +6,4 @@
   - ports
   - iptables
   - netns
+  - rsync

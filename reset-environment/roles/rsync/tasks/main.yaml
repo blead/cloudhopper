@@ -1,0 +1,5 @@
+---
+- name: Kill rsync processes
+  command: pkill -f rsync
+  become: true
+  ignore_errors: yes

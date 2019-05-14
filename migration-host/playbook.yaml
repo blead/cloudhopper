@@ -4,7 +4,8 @@
   - docker
   - criu
   - networking-tools
-  - nfs-target
+  # - nfs-target
+  - rsync-daemon
   - netns
 
 - hosts: "{{ source | default('source') }}"
@@ -14,5 +15,5 @@
   # not needed if not generating image
   # - container-tools
   - networking-tools
-  - nfs-source
+  # - nfs-source
   - netns

@@ -1,0 +1,4 @@
+---
+- name: Create /etc/rsyncd.conf
+  copy: src=rsyncd.conf dest=/etc/rsyncd.conf owner=root group=root mode=0755
+  become: true

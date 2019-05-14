@@ -10,12 +10,11 @@ import subprocess
 import distutils.util
 
 base_path = '/home/ubuntu/'
-xfer_path = '/nfs/home/ubuntu/'
 predump_dir = 'predump'
 pre = False
 lazy = False
 lazy_port = '8027'
-postcopy_pipe_prefix = 'postcopy-pipe-'
+postcopy_pipe_prefix = '/tmp/postcopy-pipe-'
 
 if len(sys.argv) < 3:
   print 'Usage: ' + sys.argv[0] + ' <container id> <dest> [pre-copy] [post-copy] [post-copy-port]'
@@ -31,7 +30,7 @@ if len(sys.argv) > 5:
   lazy_port = str(int(sys.argv[5]))
 
 container_path = base_path + container
-xfer_container_path = xfer_path + container
+predump_relative_path = '../' + predump_dir
 postcopy_pipe_path = postcopy_pipe_prefix + container
 
 def error():
@@ -42,6 +41,7 @@ def pre_dump():
   old_cwd = os.getcwd()
   os.chdir(container_path)
   cmd = 'runc checkpoint --pre-dump --image-path ' + predump_dir + ' ' + container
+  print cmd
   start = time.time()
   ret = os.system(cmd)
   end = time.time()
@@ -55,7 +55,7 @@ def real_dump(precopy, postcopy, postcopy_port = 8027):
   os.chdir(container_path)
   cmd = 'runc checkpoint'
   if precopy:
-    cmd += ' --parent-path ' + predump_dir
+    cmd += ' --parent-path ' + predump_relative_path
   if postcopy:
     cmd += ' --lazy-pages --page-server localhost:' + postcopy_port
     try:
@@ -65,8 +65,8 @@ def real_dump(precopy, postcopy, postcopy_port = 8027):
     os.mkfifo(postcopy_pipe_path)
     cmd += ' --status-fd ' + postcopy_pipe_path
   cmd += ' ' + container
-  start = time.time()
   print cmd
+  start = time.time()
   p = subprocess.Popen(cmd, shell=True)
   if postcopy:
     p_pipe = os.open(postcopy_pipe_path, os.O_RDONLY)
@@ -83,8 +83,8 @@ def real_dump(precopy, postcopy, postcopy_port = 8027):
     error()
 
 def xfer_dump(process = 'DUMP'):
-  cmd = 'cp -ruT %s %s' % (container_path, xfer_container_path)
-  print 'Transferring %s to %s' % (process, xfer_container_path)
+  cmd = 'rsync -aqz %s %s::home' % (container_path, dest)
+  print 'Transferring %s to %s::%s' % (process, dest, container_path)
   start = time.time()
   ret = os.system(cmd)
   end = time.time()
