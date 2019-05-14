@@ -1,4 +1,8 @@
 ---
+- name: Create /etc/criu
+  file: path=/etc/criu state=directory
+  become: true
+
 - name: Create a CRIU configuration file for runC
   copy: src=runc.conf dest=/etc/criu/runc.conf owner=root group=root mode=0755
   become: true
