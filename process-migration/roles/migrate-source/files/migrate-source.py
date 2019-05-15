@@ -50,7 +50,7 @@ def pre_dump():
   if ret != 0:
     error()
 
-def real_dump(precopy, postcopy, postcopy_port = 8027):
+def real_dump(precopy, postcopy, postcopy_port = '8027'):
   old_cwd = os.getcwd()
   os.chdir(container_path)
   cmd = 'runc checkpoint'

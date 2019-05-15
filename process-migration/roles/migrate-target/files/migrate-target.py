@@ -58,20 +58,30 @@ def clientthread(conn, addr):
         old_cwd = os.getcwd()
         container_path = msg['restore']['path'] + msg['restore']['container']
         image_path = container_path + '/checkpoint'
+        postcopy_pipe_path = '/tmp/postcopy-pipe-' + msg['restore']['container']
         os.chdir(container_path)
+        if lazy:
+          try:
+            os.unlink(postcopy_pipe_path)
+          except:
+            pass
+          os.mkfifo(postcopy_pipe_path)
+          page_server_cmd = "criu lazy-pages --page-server --address " + source_addr
+          page_server_cmd += " --port " + msg['restore']['port']
+          page_server_cmd += " --images-dir " + image_path
+          page_server_cmd += " --work-dir " + image_path
+          page_server_cmd += " -vvv --log-file " + image_path + "/page-server-log"
+          page_server_cmd += " --status-fd " + postcopy_pipe_path
+          print "Running lazy-pages server: " + page_server_cmd
+          p_pipe = os.open(postcopy_pipe_path, os.O_RDONLY)
+          lp = subprocess.Popen(page_server_cmd, shell=True)
+          ret = os.read(p_pipe, 1)
         cmd = 'runc restore -d --image-path' + image_path + ' --work-path ' + image_path
         if lazy:
           cmd += ' --lazy-pages'
         cmd += ' ' + msg['restore']['container']
         print "Running " +  cmd
         p = subprocess.Popen(cmd, shell=True)
-        if lazy:
-          cmd = "criu lazy-pages --page-server --address " + source_addr
-          cmd += " --port " + msg['restore']['port']
-          cmd += " -D " + image_path
-          cmd += " -W " + image_path
-          print "Running lazy-pages server: " + cmd
-          lp = subprocess.Popen(cmd, shell=True)
         ret = p.wait()
         if ret == 0:
           reply = "runc restored %s successfully" % msg['restore']['container']
