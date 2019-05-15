@@ -1,0 +1,8 @@
+---
+- name: Modify hard PAM limits
+  pam_limits: domain='*' limit_type=hard limit_item=nofile value=20480
+  become: true
+
+- name: Modify soft PAM limits
+  pam_limits: domain='*' limit_type=soft limit_item=nofile value=20480
+  become: true

@@ -7,6 +7,7 @@
   # - nfs-target
   - rsync-daemon
   - netns
+  - pam-limits
 
 - hosts: "{{ source | default('source') }}"
   roles:
@@ -17,3 +18,4 @@
   - networking-tools
   # - nfs-source
   - netns
+  - pam-limits

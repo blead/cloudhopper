@@ -4,3 +4,4 @@
     - "vars/ubuntu.yaml"
   roles:
   - strongswan
+  - pam-limits
