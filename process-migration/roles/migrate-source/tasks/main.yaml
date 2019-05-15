@@ -38,7 +38,7 @@
 - name: Check MySQL pre-dump size
   command: du -sh /home/ubuntu/mysql/predump
   become: true
-  when: precopy == 'true'
+  when: precopy is defined and precopy == 'true'
 
 - name: Check MySQL image size
   command: du -sh /home/ubuntu/mysql/checkpoint
@@ -47,7 +47,7 @@
 - name: Check WordPress pre-dump size
   command: du -sh /home/ubuntu/wordpress/predump
   become: true
-  when: precopy == 'true'
+  when: precopy is defined and precopy == 'true'
 
 - name: Check WordPress image size
   command: du -sh /home/ubuntu/wordpress/checkpoint
