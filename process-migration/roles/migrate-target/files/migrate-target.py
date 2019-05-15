@@ -76,7 +76,7 @@ def clientthread(conn, addr):
           p_pipe = os.open(postcopy_pipe_path, os.O_RDONLY)
           lp = subprocess.Popen(page_server_cmd, shell=True)
           ret = os.read(p_pipe, 1)
-        cmd = 'runc restore -d --image-path' + image_path + ' --work-path ' + image_path
+        cmd = 'runc restore -d --image-path ' + image_path + ' --work-path ' + image_path
         if lazy:
           cmd += ' --lazy-pages'
         cmd += ' ' + msg['restore']['container']

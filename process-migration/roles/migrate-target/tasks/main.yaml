@@ -8,9 +8,9 @@
   become: true
 
 - name: Execute migration target script
-  command: "./migrate-target.py {{ hostvars[source].private_address }}"
+  shell: "./migrate-target.py {{ hostvars[source].private_address }} >> migrate-target-log"
   args:
     chdir: /home/ubuntu
   become: true
-  async: 1000
+  async: 2629800
   poll: 0
