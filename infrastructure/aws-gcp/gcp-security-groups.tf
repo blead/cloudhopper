@@ -45,11 +45,11 @@ resource "google_compute_firewall" "allow-aws-vpn" {
 
 resource "google_compute_firewall" "allow-egress" {
   name    = "tf-allow-egress"
+  direction = "EGRESS"
   network = "${google_compute_network.live_migration.self_link}"
 
   allow {
     protocol = "all"
   }
 
-  source_ranges = ["0.0.0.0/0"]
 }
