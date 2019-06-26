@@ -1,3 +1,4 @@
 hosts
 playbook.retry
 .vscode/
+ansible.log
