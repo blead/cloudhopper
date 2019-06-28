@@ -3,52 +3,18 @@
   copy: src=migrate-source.py dest=/home/ubuntu/migrate-source.py owner=root group=root mode=0755
   become: true
 
-- name: Migrate MySQL
-  command: "./migrate-source.py mysql {{ hostvars[target].private_address }} {{ precopy | default('false') }} {{ postcopy | default('false') }} 8027"
+- name: Migrate MySQL and WordPress
+  command: "./migrate-source.py mysql,wordpress {{ hostvars[target].private_address }} {{ precopy | default('false') }} {{ postcopy | default('false') }} 8027"
   args:
     chdir: /home/ubuntu
   become: true
   async: 1000
   poll: 0
-  register: migrate_mysql_result
+  register: migrate_task
 
-- name: Migrate WordPress
-  command: "./migrate-source.py wordpress {{ hostvars[target].private_address }} {{ precopy | default('false') }} {{ postcopy | default('false') }} 8028"
-  args:
-    chdir: /home/ubuntu
+- name: Check migration result
+  async_status: jid="{{ migrate_task.ansible_job_id }}"
   become: true
-  async: 1000
-  poll: 0
-  register: migrate_wordpress_result
-
-- name: Check MySQL migration
-  async_status: jid="{{ migrate_mysql_result.ansible_job_id }}"
-  become: true
-  register: mysql_result
-  until: mysql_result.finished
+  register: migrate_result
+  until: migrate_result.finished
   retries: 100
-
-- name: Check WordPress migration
-  async_status: jid="{{ migrate_wordpress_result.ansible_job_id }}"
-  become: true
-  register: wordpress_result
-  until: wordpress_result.finished
-  retries: 100
-
-- name: Check MySQL pre-dump size
-  command: du -sh /home/ubuntu/mysql/predump
-  become: true
-  when: precopy is defined and precopy == 'true'
-
-- name: Check MySQL image size
-  command: du -sh /home/ubuntu/mysql/checkpoint
-  become: true
-
-- name: Check WordPress pre-dump size
-  command: du -sh /home/ubuntu/wordpress/predump
-  become: true
-  when: precopy is defined and precopy == 'true'
-
-- name: Check WordPress image size
-  command: du -sh /home/ubuntu/wordpress/checkpoint
-  become: true
