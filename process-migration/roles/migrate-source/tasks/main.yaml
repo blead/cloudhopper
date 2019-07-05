@@ -7,14 +7,10 @@
   command: "./migrate-source.py mysql,wordpress {{ hostvars[target].private_address }} {{ precopy | default('false') }} {{ postcopy | default('false') }} 8027"
   args:
     chdir: /home/ubuntu
+  environment:
+    PYTHONUNBUFFERED: 1
   become: true
-  async: 1000
-  poll: 0
-  register: migrate_task
+  register: migration_result
 
-- name: Check migration result
-  async_status: jid="{{ migrate_task.ansible_job_id }}"
-  become: true
-  register: migrate_result
-  until: migrate_result.finished
-  retries: 100
+- name: Display migration result
+  debug: var=migration_result.stdout_lines

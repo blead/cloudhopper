@@ -97,42 +97,42 @@ def transfer(container):
   container_path = base_path + container
   eval_process = subprocess.Popen('du -sh ' + container_path, shell=True, stdout=subprocess.PIPE)
   size, stderr = eval_process.communicate()
-  print '%s: total size %s' % (container, size)
+  print '%s: total size (container + predump) %s' % (container, size)
   cmd = 'rsync -aqz %s %s::home' % (container_path, target_address)
-  print '%s: transferring to %s::%s' % (container, target_address, container_path)
+  print '%s: transferring predump to %s::%s' % (container, target_address, container_path)
   start = time.time()
   process = subprocess.Popen(cmd, shell=True)
   ret = process.wait()
   end = time.time()
-  print '%s: transfer time %.2f seconds' % (container, end - start)
+  print '%s: predump transfer time %.2f seconds' % (container, end - start)
   if ret != 0 or stderr:
     error(container + ' transfer failed.')
 
 def calculate_size(container):
   container_path = base_path + container
   cmd = 'rsync -az --dry-run --stats %s %s::home' % (container_path, target_address)
-  print container + ': evaluating transfer size'
+  print container + ': evaluating checkpoint transfer size'
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
   ret, stderr = process.communicate()
   match = re.search('Total transferred file size: ([\d,]+) bytes', ret)
   if match == None or stderr:
     error(container + ' size calculation failed.')
   size = int(match.group(1).replace(',', ''))
-  print '%s: total transfer size %d bytes' % (container, size)
+  print '%s: total checkpoint transfer size %d bytes' % (container, size)
   return size
 
 def measured_transfer(container, total_size, target_size):
   sent_flag = False
   container_path = base_path + container
   cmd = 'rsync -az --info=progress2 %s %s::home' % (container_path, target_address)
-  print '%s: transferring to %s::%s' % (container, target_address, container_path)
+  print '%s: transferring checkpoint to %s::%s' % (container, target_address, container_path)
   start = time.time()
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, universal_newlines=True)
   previous_time = start
   with process.stdout:
     for line in iter(process.stdout.readline, b''):
       current_time = time.time()
-      if current_time - previous_time < 1:
+      if current_time - previous_time < 0.001:
         continue
       previous_time = current_time
       splitted_line = line.strip().split(None, 1)
@@ -145,7 +145,7 @@ def measured_transfer(container, total_size, target_size):
         break
   ret = process.wait()
   end = time.time()
-  print '%s: transfer time %.2f seconds' % (container, end - start)
+  print '%s: checkpoint transfer time %.2f seconds' % (container, end - start)
   if not sent_flag:
     queue.put(ret)
   elif ret != 0:
@@ -178,6 +178,7 @@ if precopy_enabled:
   pool.map(transfer, containers)
 
 print 'CHECKPOINT'
+downtime_start = time.time()
 pool.map(checkpoint, zip(containers, postcopy_ports))
 print 'CALCULATE'
 container_sizes = pool.map(calculate_size, containers)
@@ -185,6 +186,7 @@ transfer_tasks = list(reversed(sorted(zip(containers, container_sizes), key=lamb
 
 print 'CHECKPOINT TRANSFER'
 transfer_results = []
+checkpoint_transfer_start = time.time()
 for (index, (container, size)) in enumerate(transfer_tasks):
   target_size = 0
   if index + 1 < len(transfer_tasks):
@@ -197,6 +199,10 @@ for (index, (container, size)) in enumerate(transfer_tasks):
     error(container + ' measured transfer failed.')
   transfer_results.append(result)
 [result.wait() for result in transfer_results]
+checkpoint_transfer_end = time.time()
+print 'Total checkpoint transfer time: %.2f second(s)' % (checkpoint_transfer_end - checkpoint_transfer_start)
 
 print 'NOTIFY'
 pool.map(notify, zip(containers, postcopy_ports))
+downtime_end = time.time()
+print 'Total downtime: %.2f second(s)' % (downtime_end - downtime_start)
