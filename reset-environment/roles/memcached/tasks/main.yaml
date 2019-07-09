@@ -1,0 +1,4 @@
+---
+- name: Reset memcached - remove "status:online"
+  shell: echo "delete status" | nc -q 1 localhost 11211
+  become: true

@@ -1,0 +1,7 @@
+---
+- name: Restart dummy-server
+  supervisorctl:
+    name: dummy-server
+    state: restarted
+    config: /etc/supervisor/conf.d/dummy-server.conf
+  become: true

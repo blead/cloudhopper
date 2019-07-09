@@ -1,0 +1,8 @@
+---
+- name: Reset HAProxy rule - Set source to UP
+  shell: echo "enable server back1/source" | socat unix-connect:/var/run/haproxy/admin.sock stdio
+  become: true
+
+- name: Reset HAProxy rule - Set redir to DOWN
+  shell: echo "disable server back1/redir" | socat unix-connect:/var/run/haproxy/admin.sock stdio
+  become: true

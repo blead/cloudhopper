@@ -98,6 +98,10 @@ def touch(fname):
 if pre:
   pre_dump()
   xfer_dump('PRE-DUMP')
+subprocess.call('echo "enable server back1/redir" | \
+  socat unix-connect:/var/run/haproxy/admin.sock stdio', shell=True)
+subprocess.call('echo "disable server back1/source" | \
+  socat unix-connect:/var/run/haproxy/admin.sock stdio', shell=True)
 real_dump(pre, lazy, lazy_port)
 xfer_dump()
 

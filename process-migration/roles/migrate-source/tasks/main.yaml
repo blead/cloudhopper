@@ -35,6 +35,18 @@
   until: wordpress_result.finished
   retries: 100
 
+- name: Wait for target ({{ hostvars[target].private_address }}) to come up
+  command: "curl --silent {{ hostvars[target].private_address }}"
+  register: result
+  until: result.stdout.find("WordPress") != -1
+  retries: 60
+  delay: 1
+  changed_when: false
+
+- name: HAProxy - Set redir to DOWN
+  shell: echo "disable server back1/redir" | socat unix-connect:/var/run/haproxy/admin.sock stdio
+  become: true
+  
 - name: Check MySQL pre-dump size
   command: du -sh /home/ubuntu/mysql/predump
   become: true
