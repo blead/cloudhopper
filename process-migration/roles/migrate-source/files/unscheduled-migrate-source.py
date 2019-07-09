@@ -172,21 +172,8 @@ pool.map(checkpoint, zip(containers, postcopy_ports))
 # transfer_tasks = list(reversed(sorted(zip(containers, container_sizes), key=lambda x: x[1])))
 
 print 'CHECKPOINT TRANSFER'
-pool.map(checkpoint_transfer, containers)
-transfer_results = []
 checkpoint_transfer_start = time.time()
-for (index, (container, size)) in enumerate(transfer_tasks):
-  target_size = 0
-  if index + 1 < len(transfer_tasks):
-    target_size = transfer_tasks[index + 1][1]
-  print 'Starting transfer of ' + container
-  result = pool.apply_async(measured_transfer, (container, size, target_size))
-  print 'Waiting for transfer of ' + container
-  ret = queue.get()
-  if (ret != 0):
-    error(container + ' measured transfer failed.')
-  transfer_results.append(result)
-[result.wait() for result in transfer_results]
+pool.map(checkpoint_transfer, containers)
 checkpoint_transfer_end = time.time()
 print 'Total checkpoint transfer time: %.2f second(s)' % (checkpoint_transfer_end - checkpoint_transfer_start)
 
