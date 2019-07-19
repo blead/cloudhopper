@@ -28,6 +28,7 @@ defaults
 	mode	http
 	option	httplog
 	option	dontlognull
+	option 	redispatch
         timeout connect 10m
         timeout client  10m
         timeout server  10m
@@ -56,8 +57,8 @@ backend back1
 	balance roundrobin
 	option forwardfor
 	option httpchk HEAD / HTTP/1.1\r\nHost:\ a.com
-	default-server inter 3s fall 1 rise 1
-	server redir 127.0.0.1:12345 maxconn 20 disabled
+	default-server inter 10s fall 6 rise 1
+	server redir 127.0.0.1:12345 backup disabled
 	server source 10.200.1.5:80 check
 	{% for host in groups['host'] %}}
 	{% if not ansible_hostname == hostvars[host].ansible_hostname %}

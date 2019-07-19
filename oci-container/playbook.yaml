@@ -7,7 +7,3 @@
 - hosts: "{{ source | default('source') }}"
   roles:
   - container
-
-- hosts: "{{ target | default('target') }}"
-  roles:
-  - forward-ports

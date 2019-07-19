@@ -20,7 +20,7 @@
   delay: 1
   changed_when: false
 
-- name: HAProxy - Set redir to DOWN
+- name: HAProxy - Disable redir
   shell: echo "disable server back1/redir" | socat unix-connect:/var/run/haproxy/admin.sock stdio
   become: true
 
