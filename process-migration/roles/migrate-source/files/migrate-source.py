@@ -112,16 +112,19 @@ def calculate_size(container):
   container_path = base_path + container
   cmd = 'rsync -az --dry-run --stats %s %s::home' % (container_path, target_address)
   print container + ': evaluating checkpoint transfer size'
+  start = time.time()
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
   ret, stderr = process.communicate()
   match = re.search('Total transferred file size: ([\d,]+) bytes', ret)
   if match == None or stderr:
     error(container + ' size calculation failed.')
   size = int(match.group(1).replace(',', ''))
+  end = time.time()
   print '%s: total checkpoint transfer size %d bytes' % (container, size)
+  print '%s: checkpoint transfer size calculation time %.2f seconds' % (container, end - start)
   return size
 
-def measured_transfer(container, total_size, target_size):
+def measured_transfer(container, total_size, target_size, postcopy_port):
   sent_flag = False
   container_path = base_path + container
   cmd = 'rsync -az --info=progress2 %s %s::home' % (container_path, target_address)
@@ -150,8 +153,10 @@ def measured_transfer(container, total_size, target_size):
     queue.put(ret)
   elif ret != 0:
     error(container + ' measured transfer failed.')
+  notify(container, postcopy_port)
 
-def notify((container, postcopy_port)):
+def notify(container, postcopy_port):
+  start = time.time()
   cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   cs.connect((target_address, target_port))
   input = [cs]
@@ -168,6 +173,8 @@ def notify((container, postcopy_port)):
     for s in inputready:
       answer = s.recv(1024)
       print container + ': ' + answer
+  end = time.time()
+  print '%s: target notification time %.2f seconds' % (container, end - start)
 
 pool = multiprocessing.Pool(processes=len(containers))
 
@@ -184,31 +191,25 @@ subprocess.call('echo "enable server back1/redir" | \
   socat unix-connect:/var/run/haproxy/admin.sock stdio', shell=True)
 subprocess.call('echo "disable server back1/source" | \
   socat unix-connect:/var/run/haproxy/admin.sock stdio', shell=True)
-##
 pool.map(checkpoint, zip(containers, postcopy_ports))
+
 print 'CALCULATE'
 container_sizes = pool.map(calculate_size, containers)
-transfer_tasks = list(reversed(sorted(zip(containers, container_sizes), key=lambda x: x[1])))
+transfer_tasks = list(reversed(sorted(zip(containers, container_sizes, postcopy_ports), key=lambda x: x[1])))
 
-print 'CHECKPOINT TRANSFER'
+print 'CHECKPOINT TRANSFER + NOTIFY'
 transfer_results = []
-checkpoint_transfer_start = time.time()
-for (index, (container, size)) in enumerate(transfer_tasks):
+for (index, (container, size, postcopy_port)) in enumerate(transfer_tasks):
   target_size = 0
   if index + 1 < len(transfer_tasks):
     target_size = transfer_tasks[index + 1][1]
   print 'Starting transfer of ' + container
-  result = pool.apply_async(measured_transfer, (container, size, target_size))
+  result = pool.apply_async(measured_transfer, (container, size, target_size, postcopy_port))
   print 'Waiting for transfer of ' + container
   ret = queue.get()
   if (ret != 0):
     error(container + ' measured transfer failed.')
   transfer_results.append(result)
 [result.wait() for result in transfer_results]
-checkpoint_transfer_end = time.time()
-print 'Total checkpoint transfer time: %.2f second(s)' % (checkpoint_transfer_end - checkpoint_transfer_start)
-
-print 'NOTIFY'
-pool.map(notify, zip(containers, postcopy_ports))
 downtime_end = time.time()
 print 'Total downtime: %.2f second(s)' % (downtime_end - downtime_start)

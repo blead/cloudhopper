@@ -110,13 +110,16 @@ def calculate_size(container):
   container_path = base_path + container
   cmd = 'rsync -az --dry-run --stats %s %s::home' % (container_path, target_address)
   print container + ': evaluating checkpoint transfer size'
+  start = time.time()
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
   ret, stderr = process.communicate()
   match = re.search('Total transferred file size: ([\d,]+) bytes', ret)
   if match == None or stderr:
     error(container + ' size calculation failed.')
   size = int(match.group(1).replace(',', ''))
+  end = time.time()
   print '%s: total checkpoint transfer size %d bytes' % (container, size)
+  print '%s: checkpoint transfer size calculation time %.2f seconds' % (container, end - start)
   return size
 
 def checkpoint_transfer(container):
@@ -135,6 +138,7 @@ def checkpoint_transfer(container):
     error(container + ' transfer failed.')
 
 def notify(container, postcopy_port):
+  start = time.time()
   cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   cs.connect((target_address, target_port))
   input = [cs]
@@ -151,6 +155,8 @@ def notify(container, postcopy_port):
     for s in inputready:
       answer = s.recv(1024)
       print container + ': ' + answer
+  end = time.time()
+  print '%s: target notification time %.2f seconds' % (container, end - start)
 
 if precopy_enabled:
   print 'PREDUMP'
@@ -167,14 +173,11 @@ subprocess.call('echo "enable server back1/redir" | \
   socat unix-connect:/var/run/haproxy/admin.sock stdio', shell=True)
 subprocess.call('echo "disable server back1/source" | \
   socat unix-connect:/var/run/haproxy/admin.sock stdio', shell=True)
-##
 for (container, postcopy_port) in zip(containers, postcopy_ports):
   checkpoint(container, postcopy_port)
 
-# Not needed
-# print 'CALCULATE'
-# container_sizes = [calculate_size(container) for container in containers]
-# transfer_tasks = list(reversed(sorted(zip(containers, container_sizes), key=lambda x: x[1])))
+print 'CALCULATE'
+container_sizes = [calculate_size(container) for container in containers]
 
 print 'CHECKPOINT TRANSFER'
 checkpoint_transfer_start = time.time()
