@@ -1,0 +1,6 @@
+---
+- name: Install Memcached
+  apt:
+    update_cache: true
+    name: memcached
+  become: true

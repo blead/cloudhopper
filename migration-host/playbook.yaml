@@ -8,6 +8,9 @@
   - rsync-daemon
   - netns
   - pam-limits
+  - memcached
+  - flask-gunicorn
+  - haproxy
 
 - hosts: "{{ source | default('source') }}"
   roles:
@@ -19,3 +22,6 @@
   # - nfs-source
   - netns
   - pam-limits
+  - memcached
+  - flask-gunicorn
+  - haproxy
