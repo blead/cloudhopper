@@ -13,10 +13,10 @@
   register: migration_result
 
 - name: Wait for target ({{ hostvars[target].private_address }}) to come up
-  command: "curl --silent {{ hostvars[target].private_address }}"
+  command: "curl -m 2 --silent {{ hostvars[target].private_address }}"
   register: result
   until: result.stdout.find("WordPress") != -1
-  retries: 60
+  retries: 20
   delay: 1
   changed_when: false
 
