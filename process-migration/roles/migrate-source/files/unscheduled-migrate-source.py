@@ -98,7 +98,7 @@ def transfer(container):
   eval_process = subprocess.Popen('du -sh ' + container_path, shell=True, stdout=subprocess.PIPE)
   size, stderr = eval_process.communicate()
   print '%s: total size (container + predump) %s' % (container, size)
-  cmd = 'rsync -aqz %s %s::home' % (container_path, target_address)
+  cmd = 'rsync -aq %s %s::home' % (container_path, target_address)
   print '%s: transferring predump to %s::%s' % (container, target_address, container_path)
   start = time.time()
   process = subprocess.Popen(cmd, shell=True)
@@ -110,7 +110,7 @@ def transfer(container):
 
 def calculate_size(container):
   container_path = base_path + container
-  cmd = 'rsync -az --dry-run --stats %s %s::home' % (container_path, target_address)
+  cmd = 'rsync -a --dry-run --stats %s %s::home' % (container_path, target_address)
   print container + ': evaluating checkpoint transfer size'
   start = time.time()
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -124,12 +124,12 @@ def calculate_size(container):
   print '%s: checkpoint transfer size calculation time %.2f seconds' % (container, end - start)
   return size
 
-def checkpoint_transfer((container, postcopy_port)):
+def checkpoint_transfer(container):
   container_path = base_path + container
   eval_process = subprocess.Popen('du -sh ' + container_path, shell=True, stdout=subprocess.PIPE)
   size, stderr = eval_process.communicate()
   print '%s: total size (container + predump + checkpoint) %s' % (container, size)
-  cmd = 'rsync -aqz %s %s::home' % (container_path, target_address)
+  cmd = 'rsync -aq %s %s::home' % (container_path, target_address)
   print '%s: transferring checkpoint to %s::%s' % (container, target_address, container_path)
   start = time.time()
   process = subprocess.Popen(cmd, shell=True)
@@ -138,9 +138,9 @@ def checkpoint_transfer((container, postcopy_port)):
   print '%s: checkpoint transfer time %.2f seconds' % (container, end - start)
   if ret != 0 or stderr:
     error(container + ' transfer failed.')
-  notify(container, postcopy_port)
+  # notify(container, postcopy_port)
 
-def notify(container, postcopy_port):
+def notify((container, postcopy_port)):
   start = time.time()
   cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   cs.connect((target_address, target_port))
@@ -181,7 +181,13 @@ pool.map(checkpoint, zip(containers, postcopy_ports))
 print 'CALCULATE'
 container_sizes = pool.map(calculate_size, containers)
 
-print 'CHECKPOINT TRANSFER + NOTIFY'
-pool.map(checkpoint_transfer, zip(containers, postcopy_ports))
+print 'CHECKPOINT TRANSFER'
+checkpoint_transfer_start = time.time()
+pool.map(checkpoint_transfer, containers)
+checkpoint_transfer_end = time.time()
+print 'Total checkpoint transfer time: %.2f second(s)' % (checkpoint_transfer_end - checkpoint_transfer_start)
+
+print 'NOTIFY'
+pool.map(notify, zip(containers, postcopy_ports))
 downtime_end = time.time()
 print 'Total downtime: %.2f second(s)' % (downtime_end - downtime_start)

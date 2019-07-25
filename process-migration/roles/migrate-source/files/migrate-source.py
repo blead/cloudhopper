@@ -98,7 +98,7 @@ def transfer(container):
   eval_process = subprocess.Popen('du -sh ' + container_path, shell=True, stdout=subprocess.PIPE)
   size, stderr = eval_process.communicate()
   print '%s: total size (container + predump) %s' % (container, size)
-  cmd = 'rsync -aqz %s %s::home' % (container_path, target_address)
+  cmd = 'rsync -aq %s %s::home' % (container_path, target_address)
   print '%s: transferring predump to %s::%s' % (container, target_address, container_path)
   start = time.time()
   process = subprocess.Popen(cmd, shell=True)
@@ -110,7 +110,7 @@ def transfer(container):
 
 def calculate_size(container):
   container_path = base_path + container
-  cmd = 'rsync -az --dry-run --stats %s %s::home' % (container_path, target_address)
+  cmd = 'rsync -a --dry-run --stats %s %s::home' % (container_path, target_address)
   print container + ': evaluating checkpoint transfer size'
   start = time.time()
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -127,7 +127,7 @@ def calculate_size(container):
 def measured_transfer(container, total_size, target_size, postcopy_port):
   sent_flag = False
   container_path = base_path + container
-  cmd = 'rsync -az --info=progress2 %s %s::home' % (container_path, target_address)
+  cmd = 'rsync -a --info=progress2 %s %s::home' % (container_path, target_address)
   print '%s: transferring checkpoint to %s::%s' % (container, target_address, container_path)
   start = time.time()
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, universal_newlines=True)
