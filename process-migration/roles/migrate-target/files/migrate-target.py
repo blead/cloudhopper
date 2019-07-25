@@ -79,7 +79,7 @@ def clientthread(conn, addr):
         cmd = 'runc restore -d --image-path ' + image_path + ' --work-path ' + image_path
         if lazy:
           cmd += ' --lazy-pages'
-        cmd += ' ' + msg['restore']['container']
+        cmd += ' ' + msg['restore']['container'] + ' > ../' + msg['restore']['container'] + '_log.txt 2>&1'
         print "Running " +  cmd
         p = subprocess.Popen(cmd, shell=True)
         ret = p.wait()
