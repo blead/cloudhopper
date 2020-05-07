@@ -17,6 +17,10 @@ See https://docs.aws.amazon.com/ses/latest/DeveloperGuide/create-shared-credenti
 
 For other methods, see: https://www.terraform.io/docs/providers/aws/index.html#authentication.
 
+(Untested) The following policies are needed for the user:
+- AmazonEC2FullAccess
+- AmazonVPCFullAccess
+
 ### Azure
 
 Authentication can be done with Azure CLI.
@@ -35,9 +39,19 @@ For other methods, see: https://www.terraform.io/docs/providers/azurerm/index.ht
 
 - Create a service account for your project
 - Download the provided JSON file
-- Provide the JSON file path to the corresponding variable
+- Provide the JSON file path to the corresponding variable (`gcp_credentials_path`)
 
 https://www.terraform.io/docs/providers/google/index.html
+
+## SSH Key
+
+To create an SSH key for use with instances:
+
+```sh
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+```
+- Passphrase can be skipped.
+- The generated keypair will be used as values of the corresponding variables (`public_key_path`, `private_key_path`).
 
 ## Variables
 
@@ -57,6 +71,16 @@ Before provisioning, set up the SSH agent. For example, if the private key is `~
 ```sh
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa.pem
+```
+
+Note that if provisioning in regions other than ap-southeast-1, replace the following fields in `aws.tf`:
+  - `region`: existing value is `ap-southeast-1`.
+  - `ami`: existing value is `ami-0dad20bd1b9c8c004`, Ubuntu 18.04.
+
+Initiate Terraform, if this is the first run.
+
+```sh
+terraform init
 ```
 
 Start provisioning:
