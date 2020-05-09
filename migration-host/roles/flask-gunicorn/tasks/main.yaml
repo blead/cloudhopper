@@ -1,6 +1,6 @@
 ---
 - name: Install python-dev, python-pip, and supervisor
-  apt: name={{ item }} update_cache=true state=installed
+  apt: name={{ item }} update_cache=true state=present
   with_items:
     - python-dev
     - python-pip
@@ -22,4 +22,5 @@
 
 - name: Copy server supervisord file
   copy: src=dummy-server.conf dest=/etc/supervisor/conf.d/dummy-server.conf owner=root group=root mode=0755
+  notify: Restart supervisor
   become: true

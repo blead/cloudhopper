@@ -1,10 +1,16 @@
 ---
+- name: Create a list of hosts without the current one
+  set_fact:
+    list_other_hosts: "{{ groups['host']|difference([inventory_hostname]) }}"
+
 - name: Install HAProxy
   apt:
     update_cache: true
     name: haproxy
+  notify: Restart HAProxy
   become: true
 
-- name: Create /etc/haproxy/haproxy.cfg
-  copy: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg owner=root group=root mode=0755
+- name: Create /etc/haproxy/haproxy.cfg  
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg owner=root group=root mode=0755
+  notify: Restart HAProxy
   become: true

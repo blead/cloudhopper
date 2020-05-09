@@ -1,4 +1,7 @@
 ---
+- name: Gather facts for every host
+  hosts: all
+
 - hosts: "{{ target | default('target') }}"
   roles:
   - docker
