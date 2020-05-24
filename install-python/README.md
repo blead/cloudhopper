@@ -1,7 +1,6 @@
-# Live Migration: Reset Environment
+# Live Migration: Install Python
 
-This cleans up environment after a migration.
-Execute [OCI Container](../oci-container) and [Process Migration](../process-migration) after this to perform another migration.
+For Ansible to work at full capacity. Python needs to be installed on every instance.
 
 ## Inventory
 

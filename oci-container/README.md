@@ -1,5 +1,7 @@
 # Live Migration: OCI Container
 
+This extracts each container image and starts it on the source host. For this to work, source host needs to be supplied to Ansible via variables (`-e` option).
+
 ## Images
 
 Images are released as pre-configured archives. See [releases](https://github.com/blead/live-migration/releases/).

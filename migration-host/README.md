@@ -1,5 +1,7 @@
 # Live Migration: Migration Host
 
+This installs the necessary tools to each host. Note that there are different extra steps done on source and target hosts so they need to be supplied to Ansible via variables (`-e` option).
+
 ## Inventory
 
 Inventory file can be copied from the output of [Infrastructure](../infrastructure) section:

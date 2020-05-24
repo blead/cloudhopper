@@ -1,5 +1,7 @@
 # Live Migration: Process Migration
 
+This performs the live migration. Source and target hosts need to be supplied to Ansible via variables (`-e` option).
+
 ## Inventory
 
 Inventory file can be copied from the output of [Infrastructure](../infrastructure) section:
