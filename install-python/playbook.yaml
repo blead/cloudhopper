@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+  - name: apt-get update
+    raw:  "apt-get -yq update"
+  - name: apt-get update twice
+    raw:  "apt-get -yq update"
+  - name: apt-get install python
+    raw:  "DEBIAN_FRONTEND=noninteractive apt-get -yq install python"

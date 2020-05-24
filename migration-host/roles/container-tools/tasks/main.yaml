@@ -16,3 +16,9 @@
     dest: /usr/local/bin/umoci
     mode: 0755
   become: true
+
+- name: Install runc
+  apt:
+    update_cache: true
+    name: runc
+  become: true

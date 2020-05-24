@@ -1,6 +1,6 @@
 resource "google_compute_firewall" "allow-inbound" {
   name    = "tf-allow-inbound"
-  network = "${google_compute_network.live_migration.self_link}"
+  network = google_compute_network.live_migration.self_link
 
   allow {
     protocol = "tcp"
@@ -12,29 +12,29 @@ resource "google_compute_firewall" "allow-inbound" {
 
 resource "google_compute_firewall" "allow-internal" {
   name    = "tf-allow-internal"
-  network = "${google_compute_network.live_migration.self_link}"
+  network = google_compute_network.live_migration.self_link
 
   allow {
     protocol = "all"
   }
 
-  source_ranges = ["${google_compute_subnetwork.live_migration.ip_cidr_range}"]
+  source_ranges = [google_compute_subnetwork.live_migration.ip_cidr_range]
 }
 
 resource "google_compute_firewall" "allow-aws" {
   name    = "tf-allow-aws"
-  network = "${google_compute_network.live_migration.self_link}"
+  network = google_compute_network.live_migration.self_link
 
   allow {
     protocol = "all"
   }
 
-  source_ranges = ["${aws_vpc.default.cidr_block}"]
+  source_ranges = [aws_vpc.default.cidr_block]
 }
 
 resource "google_compute_firewall" "allow-aws-vpn" {
   name    = "tf-allow-aws-vpn"
-  network = "${google_compute_network.live_migration.self_link}"
+  network = google_compute_network.live_migration.self_link
 
   allow {
     protocol = "all"
@@ -44,12 +44,12 @@ resource "google_compute_firewall" "allow-aws-vpn" {
 }
 
 resource "google_compute_firewall" "allow-egress" {
-  name    = "tf-allow-egress"
+  name      = "tf-allow-egress"
   direction = "EGRESS"
-  network = "${google_compute_network.live_migration.self_link}"
+  network   = google_compute_network.live_migration.self_link
 
   allow {
     protocol = "all"
   }
-
 }
+

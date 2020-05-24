@@ -1,5 +1,7 @@
 # Live Migration: Infrastructure
 
+NOTE: This is pending migration to Terraform 0.12 and is not confirmed to work properly. Especially AWS-Azure.
+
 ## Directory
 
 - [AWS-Azure infrastructure](aws-azure).
