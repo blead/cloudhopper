@@ -92,7 +92,7 @@ resource "azurerm_virtual_machine" "host" {
   location                         = "${azurerm_resource_group.live_migration.location}"
   resource_group_name              = "${azurerm_resource_group.live_migration.name}"
   network_interface_ids            = ["${azurerm_network_interface.host.id}"]
-  vm_size                          = "Standard_B1s"
+  vm_size                          = "Standard_D1_v2"
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 
@@ -129,7 +129,7 @@ resource "azurerm_virtual_machine" "vpn" {
   location                         = "${azurerm_resource_group.live_migration.location}"
   resource_group_name              = "${azurerm_resource_group.live_migration.name}"
   network_interface_ids            = ["${azurerm_network_interface.vpn.id}"]
-  vm_size                          = "Standard_B1s"
+  vm_size                          = "Standard_D1_v2"
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 

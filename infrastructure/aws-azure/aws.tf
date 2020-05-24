@@ -37,7 +37,7 @@ resource "aws_subnet" "default" {
 
 resource "aws_instance" "host" {
   ami                    = "ami-0dad20bd1b9c8c004"
-  instance_type          = "t2.micro"
+  instance_type          = "t3.medium"
   key_name               = "${aws_key_pair.auth.id}"
   subnet_id              = "${aws_subnet.default.id}"
   source_dest_check      = "false"
@@ -53,23 +53,11 @@ resource "aws_instance" "host" {
   tags {
     Name = "host"
   }
-
-  provisioner "remote-exec" {
-    connection {
-      user = "ubuntu"
-    }
-
-    inline = [
-      "sudo apt-get -y update",
-      "sudo apt-get -y update",
-      "sudo apt-get -y install python",
-    ]
-  }
 }
 
 resource "aws_instance" "vpn" {
   ami                    = "ami-0dad20bd1b9c8c004"
-  instance_type          = "t2.micro"
+  instance_type          = "t3.small"
   key_name               = "${aws_key_pair.auth.id}"
   subnet_id              = "${aws_subnet.default.id}"
   source_dest_check      = "false"
@@ -83,17 +71,5 @@ resource "aws_instance" "vpn" {
 
   tags {
     Name = "vpn"
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      user = "ubuntu"
-    }
-
-    inline = [
-      "sudo apt-get -y update",
-      "sudo apt-get -y update",
-      "sudo apt-get -y install python",
-    ]
   }
 }

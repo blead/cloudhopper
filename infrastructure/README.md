@@ -76,8 +76,9 @@ ssh-add ~/.ssh/id_rsa.pem
 Note that if provisioning in regions other than ap-southeast-1, replace the following fields in `aws.tf`:
   - `region`: existing value is `ap-southeast-1`.
   - `ami`: existing value is `ami-0dad20bd1b9c8c004`, Ubuntu 18.04.
+Change similar configurations for `gcp.tf` and `azure.tf` respectively.
 
-Initiate Terraform, if this is the first run.
+Initialize Terraform, if this is the first run.
 
 ```sh
 terraform init

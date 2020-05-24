@@ -5,12 +5,6 @@ provider "google" {
     zone = "asia-southeast1-a"
 }
 
-resource "google_compute_project_metadata_item" "os_login" {
-    project = "${var.gcp_project_id}"
-    key = "enable-oslogin"
-    value = "TRUE"
-}
-
 resource "google_compute_project_metadata_item" "ssh_keys" {
     project = "${var.gcp_project_id}"
     key = "ssh-keys"
@@ -36,8 +30,8 @@ resource "google_compute_route" "live_migration" {
     priority = 100
 }
 
-# Not needed for the host machine 
-# (${google_compute_instance.host.network_interface.0.access_config.0.nat_ip} is enough) 
+# Not needed for the host machine
+# (${google_compute_instance.host.network_interface.0.access_config.0.nat_ip} is enough)
 resource "google_compute_address" "vpn" {
     name = "vpn-pip"
 }
@@ -58,18 +52,6 @@ resource "google_compute_instance" "host" {
     access_config = {
     }
   }
-
-  provisioner "remote-exec" {
-    connection {
-      user = "ubuntu"
-    }
-
-    inline = [
-      "sudo apt-get -y update",
-      "sudo apt-get -y update",
-      "sudo apt-get -y install python",
-    ]
-  }
 }
 
 resource "google_compute_instance" "vpn" {
@@ -88,17 +70,5 @@ resource "google_compute_instance" "vpn" {
     access_config = {
         nat_ip = "${google_compute_address.vpn.address}"
     }
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      user = "ubuntu"
-    }
-
-    inline = [
-      "sudo apt-get -y update",
-      "sudo apt-get -y update",
-      "sudo apt-get -y install python",
-    ]
   }
 }
