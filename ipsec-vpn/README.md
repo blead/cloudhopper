@@ -4,7 +4,7 @@ This sets up a VPN connection between each VPN instances.
 
 ## Warning
 
-As can be seen from [`ipsec.secrets.j2`](roles/strongswan/templates/ipsec.secrets.j2) template, the password used for the VPN is not secure. Consider changing it in production environments.
+As can be seen from [`ipsec.secrets.j2`](roles/strongswan/templates/ipsec.secrets.j2) template, the password used for the VPN is not secure. Do not use this in production environments.
 
 ## Inventory
 

@@ -6,7 +6,9 @@ This extracts each container image and starts it on the source host. For this to
 
 Images are released as pre-configured archives. See [releases](https://github.com/blead/live-migration/releases/).
 
-Note that credentials for database access are hard coded, and thus not secure. Consider changing them in production environments.
+Note that credentials for database access are hard coded, and thus not secure. Do not use this in production environment.
+
+For instructions on creating images, see: [IMAGESHOWTO.md](IMAGESHOWTO.md).
 
 ## Inventory
 

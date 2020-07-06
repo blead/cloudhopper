@@ -29,9 +29,9 @@ Start provisioning:
 ansible-playbook -i hosts -e source=8.9.10.11 -e target=104.215.155.205 playbook.yaml
 ```
 
-## Enabling pre-copy and post-copy
+## Enabling pre-copy
 
-Add `-e precopy=true` and/or `-e postcopy=true` to the command, for example, to enable both pre-copy and post-copy:
+Add `-e precopy=true` to the command, for example, to enable both pre-copy:
 
 ```sh
 ansible-playbook -i hosts -e source=8.9.10.11 -e target=104.215.155.205 -e precopy=true -e postcopy=true playbook.yaml

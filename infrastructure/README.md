@@ -1,5 +1,9 @@
 # Live Migration: Infrastructure
 
+In this step we utilize Terraform to initialize the infrastructure on both cloud providers used in the migration.
+There are two different configurations available, `aws-azure` and `aws-gcp`.
+Please note that this was implemented with **Terraform v0.11**.
+
 ## Directory
 
 - [AWS-Azure infrastructure](aws-azure).
